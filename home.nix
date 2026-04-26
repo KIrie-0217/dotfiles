@@ -39,6 +39,12 @@
   # yazi
   xdg.configFile."yazi".source = ./config/yazi;
 
+  # hammerspoon: config only on macOS (binary installed via brew)
+  home.file.".hammerspoon/init.lua" = {
+    source = ./config/hammerspoon/init.lua;
+    enable = pkgs.stdenv.isDarwin;
+  };
+
   # zellij launcher (git-aware layout selection)
   home.file.".local/bin/zj" = {
     source = ./config/scripts/zj;
