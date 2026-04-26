@@ -39,16 +39,14 @@ dotfiles/
     ├── wezterm/wezterm.lua         # Tab bar, theme, font
     ├── zellij/config.kdl           # Pane management, keybindings (Phase 2)
     ├── yazi/yazi.toml              # File manager settings (Phase 3)
-    ├── nvim/
-    │   ├── init.lua                # Entry point, options
-    │   └── lua/
-    │       ├── plugins.lua         # lazy.nvim plugin list + setup
-    │       ├── keymap_vanila.lua   # Core keymaps (Astarte layout)
-    │       ├── keymap_plugins.lua  # Plugin keymaps
-    │       ├── lsp_config.lua      # Mason + LSP setup
-    │       └── colorscheme.lua     # Catppuccin Mocha
-    └── scripts/
-        └── kiro-editor             # $EDITOR wrapper for Kiro CLI /editor
+    └── nvim/
+        ├── init.lua                # Entry point, options
+        └── lua/
+            ├── plugins.lua         # lazy.nvim plugin list + setup
+            ├── keymap_vanila.lua   # Core keymaps (Astarte layout)
+            ├── keymap_plugins.lua  # Plugin keymaps
+            ├── lsp_config.lua      # Mason + LSP setup
+            └── colorscheme.lua     # Catppuccin Mocha
 ```
 
 ## Design Principles
@@ -91,13 +89,6 @@ Movement keys are remapped for the [Astarte](http://cognitom.github.io/astarte/)
 | Key | Action |
 |-----|--------|
 | `<leader>a` | Rust code action (rustaceanvim) |
-
-### kiro-editor ($EDITOR)
-
-| Context | Behavior |
-|---------|----------|
-| Inside zellij | Opens nvim in a down split pane (auto-closes on exit) |
-| Outside zellij | Opens nvim normally |
 
 ### zellij / yazi
 

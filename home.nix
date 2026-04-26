@@ -39,21 +39,21 @@
   # yazi
   xdg.configFile."yazi".source = ./config/yazi;
 
-  # kiro-editor wrapper script
-  home.file.".local/bin/kiro-editor" = {
-    source = ./config/scripts/kiro-editor;
-    executable = true;
-  };
-
   # zellij launcher (git-aware layout selection)
   home.file.".local/bin/zj" = {
     source = ./config/scripts/zj;
     executable = true;
   };
 
+  # Source Home Manager session variables (EDITOR, PATH, etc.)
+  home.file.".zshenv".text = ''
+    . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
+  '';
+
   # Add ~/.local/bin to PATH and set EDITOR
   home.sessionVariables = {
-    EDITOR = "$HOME/.local/bin/kiro-editor";
+    EDITOR = "nvim";
+    VISUAL = "nvim";
   };
   home.sessionPath = [ "$HOME/.local/bin" ];
 }
