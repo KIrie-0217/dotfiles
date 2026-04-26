@@ -1,0 +1,10 @@
+#!/bin/bash
+# kiro-editor: wrapper for $EDITOR that opens nvim in a zellij pane
+# When called from Kiro CLI's /editor inside zellij, opens nvim in a split pane
+# instead of replacing the current terminal with alternate screen buffer.
+
+if [ -n "$ZELLIJ" ]; then
+  zellij run -d down -c -- nvim "$@"
+else
+  nvim "$@"
+fi
