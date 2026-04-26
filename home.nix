@@ -51,6 +51,9 @@
     executable = true;
   };
 
+  # Kiro CLI autocomplete spec for zj (zellij wrapper)
+  home.file.".fig/autocomplete/build/zj.js".source = ./config/fig/zj.js;
+
   # Source Home Manager session variables (EDITOR, PATH, etc.)
   home.file.".zshenv".text = ''
     . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"

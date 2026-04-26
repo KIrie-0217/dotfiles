@@ -1,6 +1,16 @@
 #!/usr/bin/env bash
+# zj - zellij launcher with git-aware layout selection
+#
+# Usage:
+#   zj              Start zellij with dev-git or dev layout (auto-detected)
+#   zj <args...>    Pass arguments directly to zellij
+
+if [ $# -gt 0 ]; then
+  exec zellij "$@"
+fi
+
 if [ -d .git ] || git rev-parse --git-dir &>/dev/null; then
-  exec zellij --layout dev-git "$@"
+  exec zellij --layout dev-git
 else
-  exec zellij --layout dev "$@"
+  exec zellij --layout dev
 fi
