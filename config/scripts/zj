@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+if [ -d .git ] || git rev-parse --git-dir &>/dev/null; then
+  exec zellij --layout dev-git "$@"
+else
+  exec zellij --layout dev "$@"
+fi

@@ -1,1 +1,80 @@
-// zellij config - to be configured in Phase 2
+// zellij config
+
+default_layout "dev"
+theme "catppuccin-mocha"
+pane_frames false
+default_mode "normal"
+show_startup_tips false
+
+keybinds clear-defaults=true {
+    normal {
+        // pane navigation (Astarte: N=up, S=right, T=down, K=left)
+        bind "Alt n" { MoveFocus "Up"; }
+        bind "Alt s" { MoveFocus "Right"; }
+        bind "Alt t" { MoveFocus "Down"; }
+        bind "Alt k" { MoveFocus "Left"; }
+
+        // pane resize
+        bind "Alt Shift n" { Resize "Increase Up"; }
+        bind "Alt Shift s" { Resize "Increase Right"; }
+        bind "Alt Shift t" { Resize "Increase Down"; }
+        bind "Alt Shift k" { Resize "Increase Left"; }
+
+        // split
+        bind "Alt g" { NewPane "Right"; }
+        bind "Alt h" { NewPane "Down"; }
+
+        // close pane
+        bind "Alt w" { CloseFocus; }
+
+        // fullscreen toggle
+        bind "Alt f" { ToggleFocusFullscreen; }
+
+        // floating pane
+        bind "Alt e" { ToggleFloatingPanes; }
+
+        // tabs
+        bind "Alt 1" { GoToTab 1; }
+        bind "Alt 2" { GoToTab 2; }
+        bind "Alt 3" { GoToTab 3; }
+        bind "Alt 4" { GoToTab 4; }
+        bind "Alt 5" { GoToTab 5; }
+
+        // scroll
+        bind "Alt [" { SwitchToMode "Scroll"; }
+
+        // session
+        bind "Alt d" { Detach; }
+        bind "Alt q" { Quit; }
+    }
+
+    scroll {
+        bind "Alt [" { SwitchToMode "Normal"; }
+        bind "Esc" { SwitchToMode "Normal"; }
+        bind "n" { ScrollUp; }
+        bind "t" { ScrollDown; }
+        bind "Ctrl n" { HalfPageScrollUp; }
+        bind "Ctrl t" { HalfPageScrollDown; }
+    }
+
+    shared_except "normal" {
+        bind "Esc" { SwitchToMode "Normal"; }
+    }
+}
+
+// Catppuccin Mocha
+themes {
+    catppuccin-mocha {
+        bg "#585b70"
+        fg "#cdd6f4"
+        red "#f38ba8"
+        green "#a6e3a1"
+        blue "#89b4fa"
+        yellow "#f9e2af"
+        magenta "#cba6f7"
+        orange "#fab387"
+        cyan "#89dceb"
+        black "#181825"
+        white "#cdd6f4"
+    }
+}

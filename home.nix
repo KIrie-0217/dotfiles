@@ -34,6 +34,7 @@
 
   # zellij
   xdg.configFile."zellij/config.kdl".source = ./config/zellij/config.kdl;
+  xdg.configFile."zellij/layouts".source = ./config/zellij/layouts;
 
   # yazi
   xdg.configFile."yazi".source = ./config/yazi;
@@ -41,6 +42,12 @@
   # kiro-editor wrapper script
   home.file.".local/bin/kiro-editor" = {
     source = ./config/scripts/kiro-editor;
+    executable = true;
+  };
+
+  # zellij launcher (git-aware layout selection)
+  home.file.".local/bin/zj" = {
+    source = ./config/scripts/zj;
     executable = true;
   };
 
