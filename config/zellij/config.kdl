@@ -2,7 +2,7 @@
 
 default_layout "dev"
 theme "catppuccin-mocha"
-pane_frames false
+pane_frames true
 default_mode "normal"
 show_startup_tips false
 

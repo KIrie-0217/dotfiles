@@ -1,14 +1,14 @@
 // dev-git layout: yazi (left) + kiro (right-top) + terminal (right-bottom-left) + lazygit (right-bottom-right)
 layout {
     pane split_direction="vertical" {
-        pane size="20%" command="yazi"
+        pane size="15%" command="yazi"
         pane split_direction="horizontal" {
-            pane size="60%" command="kiro-cli" {
+            pane size="60%" command="kiro-cli" focus=true {
                 args "chat"
             }
             pane size="40%" split_direction="vertical" {
-                pane size="67%"
-                pane size="33%" command="lazygit"
+                pane size="50%"
+                pane size="50%" command="lazygit"
             }
         }
     }

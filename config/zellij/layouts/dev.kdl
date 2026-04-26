@@ -1,9 +1,9 @@
 // dev layout: yazi (left) + nvim (right-top) + kiro (right-bottom)
 layout {
     pane split_direction="vertical" {
-        pane size="20%" command="yazi"
+        pane size="15%" command="yazi"
         pane split_direction="horizontal" {
-            pane size="60%" command="kiro-cli" {
+            pane size="60%" command="kiro-cli" focus=true {
                 args "chat"
             }
             pane size="40%"
