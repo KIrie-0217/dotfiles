@@ -32,7 +32,7 @@
 
       # treesitter
       (nvim-treesitter.withPlugins (p: with p; [
-        bash c css go html javascript json lua markdown markdown-inline
+        bash c css gleam go html javascript json lua markdown markdown-inline
         nix python rust toml typescript vue yaml
       ]))
 
@@ -78,6 +78,9 @@
     fd
     delta
     bat
+
+    # Languages
+    gleam
 
     # LSP servers
     pyright
