@@ -11,9 +11,66 @@
 
   programs.home-manager.enable = true;
 
+  # Neovim (plugins + LSP servers managed by Nix)
+  programs.neovim = {
+    enable = true;
+    withRuby = false;
+    withPython3 = false;
+    plugins = with pkgs.vimPlugins; [
+      # lsp
+      nvim-lspconfig
+      none-ls-nvim
+      plenary-nvim
+
+      # completion
+      nvim-cmp
+      cmp-nvim-lsp
+      cmp-buffer
+      cmp-path
+      cmp-cmdline
+      lspkind-nvim
+
+      # treesitter
+      (nvim-treesitter.withPlugins (p: with p; [
+        bash c css go html javascript json lua markdown markdown-inline
+        nix python rust toml typescript vue yaml
+      ]))
+
+      # ui
+      catppuccin-nvim
+      lualine-nvim
+      nvim-web-devicons
+      indent-blankline-nvim
+      nvim-cursorline
+
+      # fold
+      pretty-fold-nvim
+      fold-preview-nvim
+      (pkgs.vimUtils.buildVimPlugin {
+        pname = "keymap-amend-nvim";
+        version = "2024-09-09";
+        src = pkgs.fetchFromGitHub {
+          owner = "anuvyklack";
+          repo = "keymap-amend.nvim";
+          rev = "b8bf9d820878d5497fdd11d6de55dea82872d98e";
+          hash = "sha256-fjhZLetXo+chDywxukJtuMv15gJgi4c3lwYx+ubOUr4=";
+        };
+      })
+
+      # git
+      gitsigns-nvim
+      git-blame-nvim
+
+      # markdown
+      render-markdown-nvim
+
+      # rust
+      rustaceanvim
+    ];
+  };
+
   # CLI tools
   home.packages = with pkgs; [
-    neovim
     zellij
     yazi
     lazygit
@@ -21,6 +78,14 @@
     fd
     delta
     bat
+
+    # LSP servers
+    pyright
+    lua-language-server
+    vscode-langservers-extracted  # jsonls, cssls, html
+    yaml-language-server
+    gopls
+    rust-analyzer
   ];
 
   # wezterm: config only on macOS (binary installed via brew)

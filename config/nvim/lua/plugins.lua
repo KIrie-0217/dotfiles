@@ -1,47 +1,8 @@
-require("lazy").setup({
-  -- lsp
-  { "neovim/nvim-lspconfig" },
-  { "williamboman/mason.nvim" },
-  { "williamboman/mason-lspconfig.nvim" },
-  { "nvimtools/none-ls.nvim", dependencies = { "nvim-lua/plenary.nvim" } },
-
-  -- completion
-  { "hrsh7th/nvim-cmp" },
-  { "hrsh7th/cmp-nvim-lsp" },
-  { "hrsh7th/cmp-buffer" },
-  { "hrsh7th/cmp-path" },
-  { "onsails/lspkind.nvim" },
-
-  -- treesitter
-  { "nvim-treesitter/nvim-treesitter" },
-
-  -- ui
-  { "catppuccin/nvim" },
-  { "nvim-lualine/lualine.nvim", dependencies = { "nvim-tree/nvim-web-devicons" } },
-  { "lukas-reineke/indent-blankline.nvim", main = "ibl", opts = {} },
-  { "yamatsum/nvim-cursorline" },
-
-  -- fold
-  { "anuvyklack/pretty-fold.nvim" },
-  { "anuvyklack/fold-preview.nvim", requires = { "anuvyklack/keymap-amend.nvim" } },
-  { "anuvyklack/keymap-amend.nvim" },
-
-  -- git
-  { "lewis6991/gitsigns.nvim" },
-  { "f-person/git-blame.nvim" },
-
-  -- markdown
-  { "MeanderingProgrammer/markdown.nvim", name = "render-markdown",
-    dependencies = { "nvim-treesitter/nvim-treesitter" },
-    config = function() require("render-markdown").setup({}) end },
-
-  -- rust
-  { "mrcjkb/rustaceanvim", version = "^4", lazy = false },
-})
-
 -- null-ls
 require("null-ls").setup({
-  sources = {},
+  sources = {
+    require("null-ls").builtins.diagnostics.textlint.with({ filetypes = { "markdown" } }),
+  },
   debug = true,
   on_attach = function(client, bufnr)
     if client.supports_method("textDocument/formatting") then
@@ -83,13 +44,8 @@ require("nvim-treesitter.configs").setup({
 })
 vim.o.conceallevel = 2
 
--- null-ls textlint
-local null_ls = require("null-ls")
-null_ls.setup({
-  sources = {
-    null_ls.builtins.diagnostics.textlint.with({ filetypes = { "markdown" } }),
-  },
-})
+-- render-markdown
+require("render-markdown").setup({})
 
 -- nvim-cmp
 local cmp = require("cmp")
