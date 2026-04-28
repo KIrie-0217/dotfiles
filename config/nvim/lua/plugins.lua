@@ -35,13 +35,15 @@ require("lualine").setup({
 require("pretty-fold").setup()
 require("fold-preview").setup({ auto = 500 })
 
--- treesitter
-require("nvim-treesitter.configs").setup({
-  highlight = {
-    enable = true,
-    disable = { "rust", "lua", "toml", "c_sharp", "vue" },
-  },
-})
+-- treesitter (parsers installed by Nix, just enable highlight)
+vim.treesitter.start = (function(original)
+  return function(bufnr, lang)
+    lang = lang or vim.treesitter.language.get_lang(vim.bo[bufnr or 0].filetype)
+    local disable = { rust = true, lua = true, toml = true, c_sharp = true, vue = true }
+    if lang and disable[lang] then return end
+    original(bufnr, lang)
+  end
+end)(vim.treesitter.start)
 vim.o.conceallevel = 2
 
 -- render-markdown

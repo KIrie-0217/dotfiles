@@ -1,4 +1,3 @@
-local lspconfig = require('lspconfig')
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
 -- auto format on save
@@ -39,11 +38,11 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 })
 
 -- LSP servers (binaries provided by Nix home.packages)
-lspconfig.pyright.setup({ capabilities = capabilities })
-lspconfig.jsonls.setup({ capabilities = capabilities })
-lspconfig.yamlls.setup({ capabilities = capabilities })
+vim.lsp.config('pyright', { capabilities = capabilities })
+vim.lsp.config('jsonls', { capabilities = capabilities })
+vim.lsp.config('yamlls', { capabilities = capabilities })
 
-lspconfig.lua_ls.setup({
+vim.lsp.config('lua_ls', {
   capabilities = capabilities,
   settings = {
     Lua = {
@@ -56,7 +55,7 @@ lspconfig.lua_ls.setup({
   },
 })
 
-lspconfig.gopls.setup({
+vim.lsp.config('gopls', {
   capabilities = capabilities,
   settings = {
     gopls = {
@@ -66,6 +65,8 @@ lspconfig.gopls.setup({
     },
   },
 })
+
+vim.lsp.enable({ 'pyright', 'jsonls', 'yamlls', 'lua_ls', 'gopls' })
 
 -- rustaceanvim (handles rust-analyzer internally)
 local bufnr = vim.api.nvim_get_current_buf()
