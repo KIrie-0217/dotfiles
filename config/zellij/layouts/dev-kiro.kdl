@@ -1,4 +1,4 @@
-// dev layout: yazi (left) + nvim (right-top) + kiro (right-bottom)
+// dev-kiro layout: yazi (left) + kiro (right-top) + terminal (right-bottom)
 layout {
     pane split_direction="vertical" {
         pane size="15%" command="yazi"

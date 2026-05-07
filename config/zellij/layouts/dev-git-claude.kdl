@@ -1,0 +1,13 @@
+// dev-git-claude layout: yazi (left) + claude (right-top) + terminal (right-bottom-left) + lazygit (right-bottom-right)
+layout {
+    pane split_direction="vertical" {
+        pane size="15%" command="yazi"
+        pane split_direction="horizontal" {
+            pane size="60%" command="claude" focus=true
+            pane size="40%" split_direction="vertical" {
+                pane size="50%"
+                pane size="50%" command="lazygit"
+            }
+        }
+    }
+}

@@ -1,4 +1,4 @@
-// dev-git layout: yazi (left) + kiro (right-top) + terminal (right-bottom-left) + lazygit (right-bottom-right)
+// dev-git-kiro layout: yazi (left) + kiro (right-top) + terminal (right-bottom-left) + lazygit (right-bottom-right)
 layout {
     pane split_direction="vertical" {
         pane size="15%" command="yazi"

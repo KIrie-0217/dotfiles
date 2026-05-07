@@ -228,11 +228,16 @@ var subcommands = [
   },
 ];
 
+var aiSubcommands = [
+  { name: "kiro", description: "Start with kiro-cli chat" },
+  { name: "claude", description: "Start with claude (default)" },
+];
+
 var completionSpec = {
   name: "zj",
   description: "zellij launcher with git-aware layout selection",
   options: options,
-  subcommands: subcommands,
+  subcommands: aiSubcommands.concat(subcommands),
 };
 
 module.exports = { default: completionSpec };
