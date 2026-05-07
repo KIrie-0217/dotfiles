@@ -64,6 +64,18 @@
       # markdown
       render-markdown-nvim
 
+      # ai
+      (pkgs.vimUtils.buildVimPlugin {
+        pname = "amazonq-nvim";
+        version = "0.1.0";
+        src = pkgs.fetchFromGitHub {
+          owner = "awslabs";
+          repo = "amazonq.nvim";
+          rev = "9f6d2278042f282feeb74a83a32f554a5ad0ae95";
+          hash = "sha256-EoykpuPlck3JCY1dkkt0SBb7vj9miHVVIGi5UboB7lU=";
+        };
+      })
+
       # rust
       rustaceanvim
     ];
@@ -116,6 +128,12 @@
   # zellij launcher (git-aware layout selection)
   home.file.".local/bin/zj" = {
     source = ./config/scripts/zj;
+    executable = true;
+  };
+
+  # yazi opener (open file in nvim right pane)
+  home.file.".local/bin/yazi-open.sh" = {
+    source = ./config/scripts/yazi-open.sh;
     executable = true;
   };
 
