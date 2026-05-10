@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, glipt-pkg, gleeam-code-pkg, ... }:
 
 {
   home.username = "iriekos";
@@ -93,6 +93,10 @@
 
     # Languages
     gleam
+
+    # Gleam tools (from flake inputs)
+    glipt-pkg
+    gleeam-code-pkg
 
     # LSP servers
     pyright
