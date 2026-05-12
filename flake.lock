@@ -65,11 +65,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1778599496,
-        "narHash": "sha256-LZhj4BR5q/exPatgU1SSr6IbML8TH7e+s1mtn4IpSJs=",
+        "lastModified": 1778602940,
+        "narHash": "sha256-JnO0cDccT1xt6lLTqcHitEkyshDaGLZ6N9Xob9DuZl0=",
         "owner": "KIrie-0217",
         "repo": "glipt",
-        "rev": "c2d99213350bfde4ac8c9793e954f9268f403527",
+        "rev": "ee4c5150d6232833237304f03f5c39969e7000bf",
         "type": "github"
       },
       "original": {
