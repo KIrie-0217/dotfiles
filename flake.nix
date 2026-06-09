@@ -35,9 +35,13 @@
         "iriekos@mac" = mkHome {
           system = "aarch64-darwin";
         };
-        # Linux (EC2, etc.)
+        # Linux x86_64 (EC2, etc.)
         "iriekos@linux" = mkHome {
           system = "x86_64-linux";
+        };
+        # Linux aarch64 (Graviton, etc.)
+        "iriekos@linux-arm" = mkHome {
+          system = "aarch64-linux";
         };
       };
     };
