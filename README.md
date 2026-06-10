@@ -37,16 +37,21 @@ dotfiles/
 ├── home.nix                       # Home Manager (packages + config links)
 └── config/
     ├── wezterm/wezterm.lua         # Tab bar, theme, font
-    ├── zellij/config.kdl           # Pane management, keybindings (Phase 2)
-    ├── yazi/yazi.toml              # File manager settings (Phase 3)
+    ├── zellij/
+    │   ├── config.kdl             # Keybindings, theme
+    │   └── layouts/               # Tab layouts (dev-claude, dev-git-claude, etc.)
+    ├── scripts/
+    │   ├── zj                     # Zellij launcher (git-aware layout, dynamic tab name)
+    │   └── zj-tab                 # New tab creator (fzf dir + agent selection)
+    ├── yazi/yazi.toml             # File manager settings
     └── nvim/
-        ├── init.lua                # Entry point, options
+        ├── init.lua               # Entry point, options
         └── lua/
-            ├── plugins.lua         # lazy.nvim plugin list + setup
-            ├── keymap_vanila.lua   # Core keymaps (Astarte layout)
-            ├── keymap_plugins.lua  # Plugin keymaps
-            ├── lsp_config.lua      # Mason + LSP setup
-            └── colorscheme.lua     # Catppuccin Mocha
+            ├── plugins.lua        # lazy.nvim plugin list + setup
+            ├── keymap_vanila.lua  # Core keymaps (Astarte layout)
+            ├── keymap_plugins.lua # Plugin keymaps
+            ├── lsp_config.lua     # Mason + LSP setup
+            └── colorscheme.lua    # Catppuccin Mocha
 ```
 
 ## Design Principles
@@ -90,6 +95,30 @@ Movement keys are remapped for the [Astarte](http://cognitom.github.io/astarte/)
 |-----|--------|
 | `<leader>a` | Rust code action (rustaceanvim) |
 
-### zellij / yazi
+### zellij
 
-To be configured in Phase 2 and Phase 3.
+| Key | Action |
+|-----|--------|
+| `Alt n/s/t/k` | Move focus (up/right/down/left, Astarte) |
+| `Alt Shift n/s/t/k` | Resize pane |
+| `Alt g` | Split right |
+| `Alt h` | Split down |
+| `Alt w` | Close pane |
+| `Alt f` | Toggle fullscreen |
+| `Alt e` | Toggle floating panes |
+| `Alt a` | New tab (select directory + agent) |
+| `Alt [` / `Alt ]` | Previous / next tab |
+| `Alt 1-5` | Go to tab N |
+| `Alt /` | Enter scroll mode |
+| `Alt d` | Detach |
+| `Alt q` | Quit |
+
+### zj (Zellij launcher)
+
+```bash
+zj              # Start with claude (default), git-aware layout
+zj kiro         # Start with kiro
+zj claude       # Start with claude (explicit)
+```
+
+Tab name is automatically set to the current directory name.
