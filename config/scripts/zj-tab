@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# zj-tab - open a new Zellij tab with layout and directory selection
+set -euo pipefail
+
+LAYOUT_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/zellij/layouts"
+
+# Step 1: select directory (fd + fzf, pre-filled with Documents)
+dir=$(fd --type d --hidden --exclude .git --max-depth 3 . "$HOME" | fzf --prompt="dir> " --query="Documents/" --height=40% --reverse) || exit 0
+
+# Step 2: select AI agent
+ai=$(printf 'claude\nkiro\n' | fzf --prompt="agent> " --height=40% --reverse) || exit 0
+
+# Step 3: determine layout (git-aware)
+if [ -d "$dir/.git" ]; then
+  layout_name="dev-git-${ai}"
+else
+  layout_name="dev-${ai}"
+fi
+
+# Step 4: open new tab (named after the directory)
+tab_name=$(basename "$dir")
+tmp_layout="$(mktemp /tmp/zj-tab-layout-XXXXXX).kdl"
+sed "s/tab name=\"dev\"/tab name=\"${tab_name}\"/" "$LAYOUT_DIR/${layout_name}.kdl" > "$tmp_layout"
+
+zellij action new-tab --layout "$tmp_layout" --cwd "$dir" --name "$tab_name"
+rm -f "$tmp_layout"

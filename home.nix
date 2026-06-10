@@ -135,6 +135,12 @@
     executable = true;
   };
 
+  # zellij new-tab with layout/dir selection
+  home.file.".local/bin/zj-tab" = {
+    source = ./config/scripts/zj-tab;
+    executable = true;
+  };
+
   # yazi opener (open file in nvim right pane)
   home.file.".local/bin/yazi-open.sh" = {
     source = ./config/scripts/yazi-open.sh;

@@ -19,7 +19,15 @@ if [ $# -gt 0 ]; then
 fi
 
 if [ -d .git ] || git rev-parse --git-dir &>/dev/null; then
-  exec zellij --layout "dev-git-${ai}"
+  layout_name="dev-git-${ai}"
 else
-  exec zellij --layout "dev-${ai}"
+  layout_name="dev-${ai}"
 fi
+
+# Replace tab name with current directory name
+tab_name=$(basename "$PWD")
+layout_dir="${XDG_CONFIG_HOME:-$HOME/.config}/zellij/layouts"
+tmp_layout="$(mktemp /tmp/zj-layout-XXXXXX).kdl"
+sed "s/tab name=\"dev\"/tab name=\"${tab_name}\"/" "$layout_dir/${layout_name}.kdl" > "$tmp_layout"
+
+exec zellij --layout "$tmp_layout"
