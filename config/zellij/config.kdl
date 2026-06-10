@@ -33,7 +33,17 @@ keybinds clear-defaults=true {
         // floating pane
         bind "Alt e" { ToggleFloatingPanes; }
 
-        // tabs
+        // new tab with layout/dir selection
+        bind "Alt a" {
+            Run "zj-tab" {
+                floating true
+                close_on_exit true
+            }
+        }
+
+        // tab navigation
+        bind "Alt [" { GoToPreviousTab; }
+        bind "Alt ]" { GoToNextTab; }
         bind "Alt 1" { GoToTab 1; }
         bind "Alt 2" { GoToTab 2; }
         bind "Alt 3" { GoToTab 3; }
@@ -41,7 +51,7 @@ keybinds clear-defaults=true {
         bind "Alt 5" { GoToTab 5; }
 
         // scroll
-        bind "Alt [" { SwitchToMode "Scroll"; }
+        bind "Alt /" { SwitchToMode "Scroll"; }
 
         // session
         bind "Alt d" { Detach; }
@@ -49,7 +59,7 @@ keybinds clear-defaults=true {
     }
 
     scroll {
-        bind "Alt [" { SwitchToMode "Normal"; }
+        bind "Alt /" { SwitchToMode "Normal"; }
         bind "Esc" { SwitchToMode "Normal"; }
         bind "n" { ScrollUp; }
         bind "t" { ScrollDown; }
