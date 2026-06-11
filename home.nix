@@ -90,6 +90,7 @@
     fd
     delta
     bat
+    gh
 
     # Languages
     gleam
