@@ -1,6 +1,6 @@
 // zellij config
 
-default_layout "dev"
+// default_layout not needed — zj/zj-tab select layouts dynamically
 theme "catppuccin-mocha"
 pane_frames true
 default_mode "normal"
