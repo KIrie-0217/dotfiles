@@ -93,10 +93,11 @@
 
     # Languages
     gleam
-
-    # Gleam tools (from flake inputs)
+  ] ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [
+    # Gleam tools (from flake inputs) — require Hex downloads that fail in sandboxed Linux builds
     glipt-pkg
     gleeam-code-pkg
+  ] ++ [
 
     # LSP servers
     pyright
