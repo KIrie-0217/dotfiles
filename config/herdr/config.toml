@@ -24,40 +24,46 @@ agent_panel_scope = "all"
 [keys]
 prefix = "ctrl+b"
 
-# workspace/tab navigation
-next_tab = ["prefix+n", "ctrl+alt+]"]
-previous_tab = ["prefix+p", "ctrl+alt+["]
+# pane navigation (Astarte: n=up, s=right, t=down, k=left)
+focus_pane_up = "alt+n"
+focus_pane_right = "alt+s"
+focus_pane_down = "alt+t"
+focus_pane_left = "alt+k"
+
+# pane resize
+resize_up = "alt+shift+n"
+resize_right = "alt+shift+s"
+resize_down = "alt+shift+t"
+resize_left = "alt+shift+k"
+
+# pane split
+split_vertical = "alt+g"
+split_horizontal = "alt+h"
+
+# pane management
+close_pane = "alt+w"
+zoom_pane = "alt+f"
+
+# tab navigation
+next_tab = "alt+]"
+previous_tab = "alt+["
 switch_tab = "prefix+1..9"
 switch_workspace = "prefix+shift+1..9"
 focus_agent = "prefix+alt+1..9"
 
-# pane navigation (Astarte-inspired: n=up, s=right, t=down, k=left)
-navigate_pane_up = "ctrl+alt+n"
-navigate_pane_right = "ctrl+alt+s"
-navigate_pane_down = "ctrl+alt+t"
-navigate_pane_left = "ctrl+alt+k"
-
-# pane split
-split_horizontal = "prefix+minus"
-split_vertical = "prefix+backslash"
-
-# pane management
-close_pane = "prefix+w"
-zoom_pane = "prefix+f"
-
 # session
-detach = "prefix+d"
+detach = "alt+d"
 
 # new workspace with layout picker
 [[keys.command]]
-key = "prefix+a"
+key = "alt+a"
 type = "pane"
 command = "hr-tab"
 description = "new workspace with layout picker"
 
 # lazygit in temporary pane
 [[keys.command]]
-key = "prefix+g"
+key = "alt+shift+g"
 type = "pane"
 command = "lazygit"
 description = "run lazygit"
