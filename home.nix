@@ -89,6 +89,7 @@
     lazygit
     fzf
     fd
+    jq
     delta
     bat
     gh

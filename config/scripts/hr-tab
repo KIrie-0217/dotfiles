@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # hr-tab - open a new herdr workspace with layout and directory selection
+# Requires herdr server to be running (call from within herdr via keybinding)
 set -euo pipefail
 
 # Step 1: select directory (fd + fzf)
@@ -10,54 +11,42 @@ dir=$(fd --type d --hidden --exclude .git --follow --max-depth 3 . "$HOME" \
 ai=$(printf 'claude\nkiro\n' \
   | fzf --prompt="agent> " --height=40% --reverse) || exit 0
 
-# Build agent command as JSON array
+# Build agent command
 if [ "$ai" = "kiro" ]; then
-  agent_cmd='["kiro-cli", "chat"]'
+  agent_cmd="kiro-cli chat"
 else
-  agent_cmd='["claude"]'
+  agent_cmd="claude"
 fi
 
-# Step 3: determine layout (git-aware)
+# Step 3: create workspace and layout
 tab_name=$(basename "$dir")
 
+ws_json=$(herdr workspace create --cwd "$dir" --label "$tab_name" --focus)
+ws_id=$(echo "$ws_json" | jq -r '.result.workspace.workspace_id')
+pane_id=$(echo "$ws_json" | jq -r '.result.root_pane.pane_id')
+
+[ "$ws_id" = "null" ] || [ -z "$ws_id" ] && exit 1
+
+# Split: left pane as yazi (15%), new right pane (85%)
+split_json=$(herdr pane split "$pane_id" --direction right --ratio 0.85 --cwd "$dir")
+right_pane=$(echo "$split_json" | jq -r '.result.pane.pane_id // empty')
+[ -z "$right_pane" ] && exit 1
+
+# Split right: agent top (60%), bottom (40%)
+split2_json=$(herdr pane split "$right_pane" --direction down --ratio 0.6 --cwd "$dir")
+bottom_pane=$(echo "$split2_json" | jq -r '.result.pane.pane_id // empty')
+
+# Run commands
+herdr pane run "$pane_id" "yazi" >/dev/null 2>&1 || true
+herdr pane run "$right_pane" "$agent_cmd" >/dev/null 2>&1 || true
+
+# Git repo: split bottom for shell + lazygit
 if [ -d "$dir/.git" ]; then
-  herdr workspace create --cwd "$dir" --label "$tab_name"
-  herdr socket request layout.apply "$(cat <<EOF
-{
-  "tab_label": "$tab_name",
-  "focus": true,
-  "root": {
-    "type": "split", "direction": "right", "ratio": 0.15,
-    "first": {"type": "pane", "label": "files", "cwd": "$dir", "command": ["yazi"]},
-    "second": {
-      "type": "split", "direction": "down", "ratio": 0.6,
-      "first": {"type": "pane", "label": "agent", "cwd": "$dir", "command": $agent_cmd},
-      "second": {
-        "type": "split", "direction": "right", "ratio": 0.5,
-        "first": {"type": "pane", "label": "shell", "cwd": "$dir"},
-        "second": {"type": "pane", "label": "git", "cwd": "$dir", "command": ["lazygit"]}
-      }
-    }
-  }
-}
-EOF
-  )"
-else
-  herdr workspace create --cwd "$dir" --label "$tab_name"
-  herdr socket request layout.apply "$(cat <<EOF
-{
-  "tab_label": "$tab_name",
-  "focus": true,
-  "root": {
-    "type": "split", "direction": "right", "ratio": 0.15,
-    "first": {"type": "pane", "label": "files", "cwd": "$dir", "command": ["yazi"]},
-    "second": {
-      "type": "split", "direction": "down", "ratio": 0.6,
-      "first": {"type": "pane", "label": "agent", "cwd": "$dir", "command": $agent_cmd},
-      "second": {"type": "pane", "label": "shell", "cwd": "$dir"}
-    }
-  }
-}
-EOF
-  )"
+  if [ -n "$bottom_pane" ]; then
+    split3_json=$(herdr pane split "$bottom_pane" --direction right --ratio 0.5 --cwd "$dir")
+    git_pane=$(echo "$split3_json" | jq -r '.result.pane.pane_id // empty')
+    if [ -n "$git_pane" ]; then
+      herdr pane run "$git_pane" "lazygit" >/dev/null 2>&1 || true
+    fi
+  fi
 fi
