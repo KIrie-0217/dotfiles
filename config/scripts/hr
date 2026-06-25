@@ -41,25 +41,25 @@ setup_layout() {
 
   [ "$ws_id" = "null" ] || [ -z "$ws_id" ] && return 1
 
-  # Split: left pane stays as yazi (15%), new right pane (85%)
+  # Split: root pane becomes main (85% left), new right pane for yazi (15%)
   local split_json
   split_json=$(herdr pane split "$pane_id" --direction right --ratio 0.85 --cwd "$dir")
-  local right_pane
-  right_pane=$(echo "$split_json" | jq -r '.result.pane.pane_id // empty')
+  local yazi_pane
+  yazi_pane=$(echo "$split_json" | jq -r '.result.pane.pane_id // empty')
 
-  [ -z "$right_pane" ] && return 1
+  [ -z "$yazi_pane" ] && return 1
 
-  # Split right pane: top for agent (60%), bottom (40%)
+  # Split main (left) pane: top for agent (60%), bottom (40%)
   local split2_json
-  split2_json=$(herdr pane split "$right_pane" --direction down --ratio 0.6 --cwd "$dir")
+  split2_json=$(herdr pane split "$pane_id" --direction down --ratio 0.6 --cwd "$dir")
   local bottom_pane
   bottom_pane=$(echo "$split2_json" | jq -r '.result.pane.pane_id // empty')
 
-  # Run yazi in left pane
-  herdr pane run "$pane_id" "yazi" >/dev/null 2>&1 || true
+  # Run agent in left-top pane
+  herdr pane run "$pane_id" "$agent_cmd" >/dev/null 2>&1 || true
 
-  # Run agent in right-top pane
-  herdr pane run "$right_pane" "$agent_cmd" >/dev/null 2>&1 || true
+  # Run yazi in right pane
+  herdr pane run "$yazi_pane" "yazi" >/dev/null 2>&1 || true
 
   # Git repo: split bottom for shell + lazygit
   if [ -d "$dir/.git" ] || git -C "$dir" rev-parse --git-dir &>/dev/null; then
