@@ -15,9 +15,13 @@
       url = "github:KIrie-0217/gleeam_code";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    herdr = {
+      url = "github:ogulcancelik/herdr";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { nixpkgs, home-manager, glipt, gleeam-code, ... }:
+  outputs = { nixpkgs, home-manager, glipt, gleeam-code, herdr, ... }:
     let
       mkHome = { system, extraModules ? [] }:
         home-manager.lib.homeManagerConfiguration {
@@ -26,6 +30,7 @@
           extraSpecialArgs = {
             glipt-pkg = glipt.packages.${system}.default;
             gleeam-code-pkg = gleeam-code.packages.${system}.default;
+            herdr-pkg = herdr.packages.${system}.default;
           };
         };
     in

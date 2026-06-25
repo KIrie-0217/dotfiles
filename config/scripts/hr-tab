@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+# hr-tab - open a new herdr workspace with layout and directory selection
+set -euo pipefail
+
+# Step 1: select directory (fd + fzf)
+dir=$(fd --type d --hidden --exclude .git --follow --max-depth 3 . "$HOME" \
+  | fzf --prompt="dir> " --query="$HOME/" --height=40% --reverse) || exit 0
+
+# Step 2: select AI agent
+ai=$(printf 'claude\nkiro\n' \
+  | fzf --prompt="agent> " --height=40% --reverse) || exit 0
+
+# Build agent command as JSON array
+if [ "$ai" = "kiro" ]; then
+  agent_cmd='["kiro-cli", "chat"]'
+else
+  agent_cmd='["claude"]'
+fi
+
+# Step 3: determine layout (git-aware)
+tab_name=$(basename "$dir")
+
+if [ -d "$dir/.git" ]; then
+  herdr workspace create --cwd "$dir" --label "$tab_name"
+  herdr socket request layout.apply "$(cat <<EOF
+{
+  "tab_label": "$tab_name",
+  "focus": true,
+  "root": {
+    "type": "split", "direction": "right", "ratio": 0.15,
+    "first": {"type": "pane", "label": "files", "cwd": "$dir", "command": ["yazi"]},
+    "second": {
+      "type": "split", "direction": "down", "ratio": 0.6,
+      "first": {"type": "pane", "label": "agent", "cwd": "$dir", "command": $agent_cmd},
+      "second": {
+        "type": "split", "direction": "right", "ratio": 0.5,
+        "first": {"type": "pane", "label": "shell", "cwd": "$dir"},
+        "second": {"type": "pane", "label": "git", "cwd": "$dir", "command": ["lazygit"]}
+      }
+    }
+  }
+}
+EOF
+  )"
+else
+  herdr workspace create --cwd "$dir" --label "$tab_name"
+  herdr socket request layout.apply "$(cat <<EOF
+{
+  "tab_label": "$tab_name",
+  "focus": true,
+  "root": {
+    "type": "split", "direction": "right", "ratio": 0.15,
+    "first": {"type": "pane", "label": "files", "cwd": "$dir", "command": ["yazi"]},
+    "second": {
+      "type": "split", "direction": "down", "ratio": 0.6,
+      "first": {"type": "pane", "label": "agent", "cwd": "$dir", "command": $agent_cmd},
+      "second": {"type": "pane", "label": "shell", "cwd": "$dir"}
+    }
+  }
+}
+EOF
+  )"
+fi

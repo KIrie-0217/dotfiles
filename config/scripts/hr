@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+# hr - herdr launcher with git-aware layout
+#
+# Usage:
+#   hr              Start herdr with claude (default)
+#   hr kiro         Start herdr with kiro-cli chat
+#   hr claude       Start herdr with claude
+#   hr <args...>    Pass arguments directly to herdr
+
+set -euo pipefail
+
+ai="claude"
+
+case "${1:-}" in
+  kiro)   ai="kiro-cli"; shift ;;
+  claude) ai="claude"; shift ;;
+esac
+
+if [ $# -gt 0 ]; then
+  exec herdr "$@"
+fi
+
+dir="$PWD"
+tab_name=$(basename "$dir")
+
+# Build agent command as JSON array
+if [ "$ai" = "kiro-cli" ]; then
+  agent_cmd='["kiro-cli", "chat"]'
+else
+  agent_cmd="[\"$ai\"]"
+fi
+
+if [ -d "$dir/.git" ] || git -C "$dir" rev-parse --git-dir &>/dev/null; then
+  # Git repo: yazi | agent | shell + lazygit
+  herdr workspace create --cwd "$dir" --label "$tab_name"
+  herdr socket request layout.apply "$(cat <<EOF
+{
+  "tab_label": "$tab_name",
+  "focus": true,
+  "root": {
+    "type": "split", "direction": "right", "ratio": 0.15,
+    "first": {"type": "pane", "label": "files", "command": ["yazi"]},
+    "second": {
+      "type": "split", "direction": "down", "ratio": 0.6,
+      "first": {"type": "pane", "label": "agent", "command": $agent_cmd},
+      "second": {
+        "type": "split", "direction": "right", "ratio": 0.5,
+        "first": {"type": "pane", "label": "shell"},
+        "second": {"type": "pane", "label": "git", "command": ["lazygit"]}
+      }
+    }
+  }
+}
+EOF
+  )"
+else
+  # Non-git: yazi | agent | shell
+  herdr workspace create --cwd "$dir" --label "$tab_name"
+  herdr socket request layout.apply "$(cat <<EOF
+{
+  "tab_label": "$tab_name",
+  "focus": true,
+  "root": {
+    "type": "split", "direction": "right", "ratio": 0.15,
+    "first": {"type": "pane", "label": "files", "command": ["yazi"]},
+    "second": {
+      "type": "split", "direction": "down", "ratio": 0.6,
+      "first": {"type": "pane", "label": "agent", "command": $agent_cmd},
+      "second": {"type": "pane", "label": "shell"}
+    }
+  }
+}
+EOF
+  )"
+fi

@@ -5,5 +5,5 @@ show_hidden = true
 
 [opener]
 edit = [
-    { run = 'zellij run -f -c --width 80% --height 80% -- nvim %s', orphan = true, desc = "Edit in floating pane", for = "unix" },
+    { run = 'herdr pane split --direction right --ratio 0.8 --current --command "nvim %s" --close-on-exit', orphan = true, desc = "Edit in split pane", for = "unix" },
 ]

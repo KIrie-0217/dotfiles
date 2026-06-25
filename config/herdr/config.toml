@@ -1,0 +1,63 @@
+# herdr config
+
+[theme]
+name = "catppuccin"
+
+[theme.custom]
+panel_bg = "reset"
+accent = "#89b4fa"
+green = "#a6e3a1"
+blue = "#89b4fa"
+red = "#f38ba8"
+yellow = "#f9e2af"
+
+[ui]
+sidebar_width = 32
+sidebar_min_width = 18
+sidebar_max_width = 36
+mouse_capture = true
+confirm_close = true
+prompt_new_tab_name = false
+show_agent_labels_on_pane_borders = true
+agent_panel_scope = "all"
+
+[keys]
+prefix = "ctrl+b"
+
+# workspace/tab navigation
+next_tab = ["prefix+n", "ctrl+alt+]"]
+previous_tab = ["prefix+p", "ctrl+alt+["]
+switch_tab = "prefix+1..9"
+switch_workspace = "prefix+shift+1..9"
+focus_agent = "prefix+alt+1..9"
+
+# pane navigation (Astarte-inspired: n=up, s=right, t=down, k=left)
+navigate_pane_up = "ctrl+alt+n"
+navigate_pane_right = "ctrl+alt+s"
+navigate_pane_down = "ctrl+alt+t"
+navigate_pane_left = "ctrl+alt+k"
+
+# pane split
+split_horizontal = "prefix+minus"
+split_vertical = "prefix+backslash"
+
+# pane management
+close_pane = "prefix+w"
+zoom_pane = "prefix+f"
+
+# session
+detach = "prefix+d"
+
+# new workspace with layout picker
+[[keys.command]]
+key = "prefix+a"
+type = "pane"
+command = "hr-tab"
+description = "new workspace with layout picker"
+
+# lazygit in temporary pane
+[[keys.command]]
+key = "prefix+g"
+type = "pane"
+command = "lazygit"
+description = "run lazygit"
