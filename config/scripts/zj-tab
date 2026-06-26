@@ -5,7 +5,7 @@ set -euo pipefail
 LAYOUT_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/zellij/layouts"
 
 # Step 1: select directory (fd + fzf, pre-filled with Documents)
-dir=$(fd --type d --hidden --exclude .git --follow --max-depth 3 . "$HOME" | fzf --prompt="dir> " --query="$HOME/" --height=40% --reverse) || exit 0
+dir=$(fd --type d --hidden --exclude .git --follow --max-depth 7 . "$HOME" | fzf --prompt="dir> " --query="$HOME/" --height=40% --reverse) || exit 0
 
 # Step 2: select AI agent
 ai=$(printf 'claude\nkiro\n' | fzf --prompt="agent> " --height=40% --reverse) || exit 0

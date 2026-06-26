@@ -1,15 +1,3 @@
--- null-ls
-require("null-ls").setup({
-  sources = {
-    require("null-ls").builtins.diagnostics.textlint.with({ filetypes = { "markdown" } }),
-  },
-  debug = true,
-  on_attach = function(client, bufnr)
-    if client.supports_method("textDocument/formatting") then
-    end
-  end,
-})
-
 -- ibl
 require("ibl").setup()
 
@@ -48,6 +36,12 @@ vim.o.conceallevel = 2
 
 -- render-markdown
 require("render-markdown").setup({})
+
+-- markdown-preview
+vim.g.mkdp_port = "8689"
+vim.g.mkdp_open_to_the_world = 1
+vim.g.mkdp_open_ip = "127.0.0.1"
+vim.g.mkdp_echo_preview_url = 1
 
 -- nvim-cmp
 local cmp = require("cmp")

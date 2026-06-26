@@ -19,7 +19,6 @@
     plugins = with pkgs.vimPlugins; [
       # lsp
       nvim-lspconfig
-      none-ls-nvim
       plenary-nvim
 
       # completion
@@ -63,6 +62,7 @@
 
       # markdown
       render-markdown-nvim
+      markdown-preview-nvim
 
       # ai
       (pkgs.vimUtils.buildVimPlugin {
