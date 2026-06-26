@@ -1,0 +1,76 @@
+# herdr config
+
+[theme]
+name = "catppuccin"
+
+[theme.custom]
+panel_bg = "reset"
+accent = "#89b4fa"
+green = "#a6e3a1"
+blue = "#89b4fa"
+red = "#f38ba8"
+yellow = "#f9e2af"
+
+[ui]
+sidebar_width = 32
+sidebar_min_width = 18
+sidebar_max_width = 36
+mouse_capture = true
+confirm_close = true
+prompt_new_tab_name = false
+show_agent_labels_on_pane_borders = true
+agent_panel_scope = "all"
+
+[keys]
+prefix = "ctrl+b"
+
+# pane navigation (Astarte: n=up, s=right, t=down, k=left)
+focus_pane_up = "alt+n"
+focus_pane_right = "alt+s"
+focus_pane_down = "alt+t"
+focus_pane_left = "alt+k"
+
+# pane resize (enters resize mode, then use n/s/t/k to resize)
+resize_mode = "alt+r"
+
+# pane split
+split_vertical = "alt+g"
+split_horizontal = "alt+h"
+
+# pane management
+close_pane = "alt+w"
+zoom = "alt+f"
+
+# workspace navigation
+next_workspace = "alt+period"
+previous_workspace = "alt+comma"
+switch_workspace = "alt+1..9"
+focus_agent = "prefix+alt+1..9"
+
+# session
+close_workspace = "alt+q"
+detach = "alt+d"
+
+# new workspace with layout picker
+[[keys.command]]
+key = "alt+a"
+type = "pane"
+command = "hr-tab"
+description = "new workspace with layout picker"
+
+# close current workspace and detach
+[[keys.command]]
+key = "alt+shift+q"
+type = "shell"
+command = "hr-quit"
+description = "close current workspace and detach"
+
+# lazygit in temporary pane
+[[keys.command]]
+key = "alt+shift+g"
+type = "pane"
+command = "lazygit"
+description = "run lazygit"
+
+[experimental]
+kitty_graphics = true

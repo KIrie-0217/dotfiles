@@ -1,10 +1,34 @@
 #!/usr/bin/env bash
-# yazi opener: open file in existing nvim (via --remote) or new right pane
+# yazi opener: open file in nvim pane (split from agent pane), reuse if already open
 SOCKET="/tmp/nvim-yazi.sock"
-FILE="$1"
 
+# If nvim is already running, send file via --remote
 if [ -S "$SOCKET" ] && nvim --server "$SOCKET" --remote-expr "1" &>/dev/null; then
-  nvim --server "$SOCKET" --remote "$FILE"
-else
-  zellij run --direction right --name "nvim" -- nvim --listen "$SOCKET" "$FILE"
+  nvim --server "$SOCKET" --remote-tab "$@"
+  exit 0
 fi
+
+# Find the agent (claude) pane directly by label
+AGENT_PANE=$(herdr pane list 2>/dev/null \
+  | jq -r '.result.panes[] | select(.agent == "claude") | .pane_id' | head -1)
+[ -z "$AGENT_PANE" ] && exec nvim "$@"
+
+# Write a launch script with embedded file paths (avoids temp-file race)
+LAUNCH="/tmp/herdr-nvim-launch.sh"
+{
+  echo '#!/usr/bin/env bash'
+  printf 'exec nvim -p --listen %q' "$SOCKET"
+  for f in "$@"; do printf ' %q' "$f"; done
+  echo
+} > "$LAUNCH"
+chmod +x "$LAUNCH"
+
+# Split agent pane right (50/50)
+NEW_PANE=$(herdr pane split "$AGENT_PANE" --direction right --ratio 0.5 2>/dev/null \
+  | jq -r '.result.pane.pane_id // empty')
+[ -z "$NEW_PANE" ] && exec nvim "$@"
+
+# Wait for shell init, then exec the launch script (absolute path, no PATH dependency)
+sleep 0.3
+herdr pane send-text "$NEW_PANE" "exec $LAUNCH"
+herdr pane send-keys "$NEW_PANE" Enter

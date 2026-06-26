@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+# hr-tab - open a new herdr workspace with layout and directory selection
+# Requires herdr server to be running (call from within herdr via keybinding)
+set -euo pipefail
+
+# Get current workspace's cwd as starting point
+start_dir=$(herdr pane current 2>/dev/null | jq -r '.result.pane.cwd // empty' 2>/dev/null)
+start_dir="${start_dir:-$HOME}"
+
+# Step 1: select directory (fd + fzf)
+dir=$(fd --type d --hidden --exclude .git --follow --max-depth 7 . "$HOME" \
+  | fzf --prompt="dir> " --query="$start_dir/" --height=40% --reverse \
+         --bind "tab:replace-query") || exit 0
+
+# Step 2: select AI agent
+ai=$(printf 'claude\nkiro\n' \
+  | fzf --prompt="agent> " --height=40% --reverse) || exit 0
+
+# Build agent command
+if [ "$ai" = "kiro" ]; then
+  agent_cmd="kiro-cli chat"
+else
+  agent_cmd="claude"
+fi
+
+# Step 3: create workspace and layout
+tab_name=$(basename "$dir")
+
+ws_json=$(herdr workspace create --cwd "$dir" --label "$tab_name" --focus)
+ws_id=$(echo "$ws_json" | jq -r '.result.workspace.workspace_id')
+pane_id=$(echo "$ws_json" | jq -r '.result.root_pane.pane_id')
+
+[ "$ws_id" = "null" ] || [ -z "$ws_id" ] && exit 1
+
+# Split: root pane becomes main (85% left), new right pane for yazi (15%)
+split_json=$(herdr pane split "$pane_id" --direction right --ratio 0.85 --cwd "$dir")
+yazi_pane=$(echo "$split_json" | jq -r '.result.pane.pane_id // empty')
+[ -z "$yazi_pane" ] && exit 1
+
+# Split main (left): agent top (60%), bottom (40%)
+split2_json=$(herdr pane split "$pane_id" --direction down --ratio 0.6 --cwd "$dir")
+bottom_pane=$(echo "$split2_json" | jq -r '.result.pane.pane_id // empty')
+
+# Run commands
+herdr pane run "$pane_id" "$agent_cmd" >/dev/null 2>&1 || true
+herdr pane run "$yazi_pane" "TERM_PROGRAM= WEZTERM_PANE= yazi" >/dev/null 2>&1 || true
+
+# Git repo: split bottom for shell + lazygit
+if [ -d "$dir/.git" ]; then
+  if [ -n "$bottom_pane" ]; then
+    split3_json=$(herdr pane split "$bottom_pane" --direction right --ratio 0.5 --cwd "$dir")
+    git_pane=$(echo "$split3_json" | jq -r '.result.pane.pane_id // empty')
+    if [ -n "$git_pane" ]; then
+      herdr pane run "$git_pane" "lazygit" >/dev/null 2>&1 || true
+    fi
+  fi
+fi

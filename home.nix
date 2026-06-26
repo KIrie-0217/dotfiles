@@ -1,4 +1,4 @@
-{ pkgs, glipt-pkg, gleeam-code-pkg, ... }:
+{ pkgs, glipt-pkg, gleeam-code-pkg, herdr-pkg, ... }:
 
 {
   home.username = "iriekos";
@@ -84,12 +84,15 @@
   # CLI tools
   home.packages = with pkgs; [
     zellij
+    herdr-pkg
     yazi
     lazygit
     fzf
     fd
+    jq
     delta
     bat
+    chafa
     gh
 
     # Languages
@@ -122,6 +125,9 @@
   xdg.configFile."zellij/config.kdl".source = ./config/zellij/config.kdl;
   xdg.configFile."zellij/layouts".source = ./config/zellij/layouts;
 
+  # herdr
+  xdg.configFile."herdr/config.toml".source = ./config/herdr/config.toml;
+
   # yazi
   xdg.configFile."yazi".source = ./config/yazi;
 
@@ -143,14 +149,37 @@
     executable = true;
   };
 
+  # herdr launcher (git-aware layout selection)
+  home.file.".local/bin/hr" = {
+    source = ./config/scripts/hr;
+    executable = true;
+  };
+
+  # herdr new-workspace with layout/dir selection
+  home.file.".local/bin/hr-tab" = {
+    source = ./config/scripts/hr-tab;
+    executable = true;
+  };
+
+  # herdr close current workspace and detach
+  home.file.".local/bin/hr-quit" = {
+    source = ./config/scripts/hr-quit;
+    executable = true;
+  };
+
   # yazi opener (open file in nvim right pane)
   home.file.".local/bin/yazi-open.sh" = {
     source = ./config/scripts/yazi-open.sh;
     executable = true;
   };
+  home.file.".local/bin/yazi-nvim-wrapper.sh" = {
+    source = ./config/scripts/yazi-nvim-wrapper.sh;
+    executable = true;
+  };
 
-  # Kiro CLI autocomplete spec for zj (zellij wrapper)
+  # Autocomplete specs
   home.file.".fig/autocomplete/build/zj.js".source = ./config/fig/zj.js;
+  home.file.".fig/autocomplete/build/hr.js".source = ./config/fig/hr.js;
 
   # Source Home Manager session variables (EDITOR, PATH, etc.)
   home.file.".zshenv".text = ''

@@ -1,0 +1,96 @@
+#!/usr/bin/env bash
+# hr - herdr launcher with git-aware layout
+#
+# Usage:
+#   hr              Start herdr with claude (default)
+#   hr kiro         Start herdr with kiro-cli chat
+#   hr claude       Start herdr with claude
+#   hr <args...>    Pass arguments directly to herdr
+
+set -euo pipefail
+
+ai="claude"
+
+case "${1:-}" in
+  kiro)   ai="kiro-cli"; shift ;;
+  claude) ai="claude"; shift ;;
+esac
+
+if [ $# -gt 0 ]; then
+  exec herdr "$@"
+fi
+
+dir="$PWD"
+tab_name=$(basename "$dir")
+
+# Build agent command
+if [ "$ai" = "kiro-cli" ]; then
+  agent_cmd="kiro-cli chat"
+else
+  agent_cmd="$ai"
+fi
+
+setup_layout() {
+  # Create workspace
+  local ws_json
+  ws_json=$(herdr workspace create --cwd "$dir" --label "$tab_name" --focus)
+  local ws_id
+  ws_id=$(echo "$ws_json" | jq -r '.result.workspace.workspace_id')
+  local pane_id
+  pane_id=$(echo "$ws_json" | jq -r '.result.root_pane.pane_id')
+
+  [ "$ws_id" = "null" ] || [ -z "$ws_id" ] && return 1
+
+  # Split: root pane becomes main (85% left), new right pane for yazi (15%)
+  local split_json
+  split_json=$(herdr pane split "$pane_id" --direction right --ratio 0.85 --cwd "$dir")
+  local yazi_pane
+  yazi_pane=$(echo "$split_json" | jq -r '.result.pane.pane_id // empty')
+
+  [ -z "$yazi_pane" ] && return 1
+
+  # Split main (left) pane: top for agent (60%), bottom (40%)
+  local split2_json
+  split2_json=$(herdr pane split "$pane_id" --direction down --ratio 0.6 --cwd "$dir")
+  local bottom_pane
+  bottom_pane=$(echo "$split2_json" | jq -r '.result.pane.pane_id // empty')
+
+  # Run agent in left-top pane
+  herdr pane run "$pane_id" "$agent_cmd" >/dev/null 2>&1 || true
+
+  # Run yazi in right pane
+  herdr pane run "$yazi_pane" "yazi" >/dev/null 2>&1 || true
+
+  # Git repo: split bottom for shell + lazygit
+  if [ -d "$dir/.git" ] || git -C "$dir" rev-parse --git-dir &>/dev/null; then
+    if [ -n "$bottom_pane" ]; then
+      local split3_json
+      split3_json=$(herdr pane split "$bottom_pane" --direction right --ratio 0.5 --cwd "$dir")
+      local git_pane
+      git_pane=$(echo "$split3_json" | jq -r '.result.pane.pane_id // empty')
+      if [ -n "$git_pane" ]; then
+        herdr pane run "$git_pane" "lazygit" >/dev/null 2>&1 || true
+      fi
+    fi
+  fi
+}
+
+# Check if herdr server is already running
+if herdr status 2>&1 | grep -q "status: running"; then
+  setup_layout || true
+  exec herdr
+else
+  # Start server in background
+  herdr server &>/dev/null &
+
+  # Wait for socket
+  for _ in $(seq 1 30); do
+    if herdr status 2>&1 | grep -q "status: running"; then
+      break
+    fi
+    sleep 0.1
+  done
+
+  setup_layout || true
+  exec herdr
+fi

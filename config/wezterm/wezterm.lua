@@ -13,6 +13,10 @@ config.color_scheme = "Catppuccin Mocha"
 config.window_background_opacity = 0.9
 config.macos_window_background_blur = 10
 
+-- send Option as Alt (required for herdr/zellij Alt+key bindings on macOS)
+config.send_composed_key_when_left_alt_is_pressed = false
+config.send_composed_key_when_right_alt_is_pressed = false
+
 -- font
 config.font = wezterm.font("HackGen35 Console NF", { style = "Normal" })
 config.font_size = 14
