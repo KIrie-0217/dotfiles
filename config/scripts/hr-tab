@@ -8,9 +8,14 @@ start_dir=$(herdr pane current 2>/dev/null | jq -r '.result.pane.cwd // empty' 2
 start_dir="${start_dir:-$HOME}"
 
 # Step 1: select directory (fd + fzf)
-dir=$(fd --type d --hidden --exclude .git --follow --max-depth 7 . "$HOME" \
+# Dynamic reload: find the longest valid directory prefix from the query,
+# then search max-depth 3 from there. This keeps results fast and relative to input.
+fd_from_query='bash -c '\''q="$1"; while [ -n "$q" ] && [ ! -d "$q" ]; do q="${q%/*}"; done; q="${q:-$HOME}"; fd --type d --no-ignore --hidden --exclude .git --follow --max-depth 3 . "$q" 2>/dev/null'\'' _ {q}'
+
+dir=$(fd --type d --no-ignore --hidden --exclude .git --follow --max-depth 3 . "$start_dir" 2>/dev/null \
   | fzf --prompt="dir> " --query="$start_dir/" --height=40% --reverse \
-         --bind "tab:replace-query") || exit 0
+         --bind "tab:replace-query" \
+         --bind "change:reload:$fd_from_query") || exit 0
 
 # Step 2: select AI agent
 ai=$(printf 'claude\nkiro\n' \
