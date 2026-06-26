@@ -30,11 +30,8 @@ focus_pane_right = "alt+s"
 focus_pane_down = "alt+t"
 focus_pane_left = "alt+k"
 
-# pane resize
-resize_up = "alt+shift+n"
-resize_right = "alt+shift+s"
-resize_down = "alt+shift+t"
-resize_left = "alt+shift+k"
+# pane resize (enters resize mode, then use n/s/t/k to resize)
+resize_mode = "alt+r"
 
 # pane split
 split_vertical = "alt+g"
@@ -42,7 +39,7 @@ split_horizontal = "alt+h"
 
 # pane management
 close_pane = "alt+w"
-zoom_pane = "alt+f"
+zoom = "alt+f"
 
 # workspace navigation
 next_workspace = "alt+]"
@@ -52,7 +49,6 @@ focus_agent = "prefix+alt+1..9"
 
 # session
 close_workspace = "alt+q"
-quit = "alt+shift+q"
 detach = "alt+d"
 
 # new workspace with layout picker
