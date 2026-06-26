@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # yazi opener: open file in nvim pane (split from agent pane), reuse if already open
-SOCKET="/tmp/nvim-yazi.sock"
+WS_ID="${HERDR_WORKSPACE_ID:-default}"
+SOCKET="/tmp/nvim-yazi-${WS_ID}.sock"
 
 # If nvim is already running, send file via --remote
 if [ -S "$SOCKET" ] && nvim --server "$SOCKET" --remote-expr "1" &>/dev/null; then
@@ -8,8 +9,10 @@ if [ -S "$SOCKET" ] && nvim --server "$SOCKET" --remote-expr "1" &>/dev/null; th
   exit 0
 fi
 
-# Find the agent (claude) pane directly by label
-AGENT_PANE=$(herdr pane list 2>/dev/null \
+# Find the agent (claude) pane in the current workspace
+WS_FLAG=()
+[ -n "${HERDR_WORKSPACE_ID:-}" ] && WS_FLAG=(--workspace "$HERDR_WORKSPACE_ID")
+AGENT_PANE=$(herdr pane list "${WS_FLAG[@]}" 2>/dev/null \
   | jq -r '.result.panes[] | select(.agent == "claude") | .pane_id' | head -1)
 [ -z "$AGENT_PANE" ] && exec nvim "$@"
 
@@ -28,7 +31,4 @@ NEW_PANE=$(herdr pane split "$AGENT_PANE" --direction right --ratio 0.5 2>/dev/n
   | jq -r '.result.pane.pane_id // empty')
 [ -z "$NEW_PANE" ] && exec nvim "$@"
 
-# Wait for shell init, then exec the launch script (absolute path, no PATH dependency)
-sleep 0.3
-herdr pane send-text "$NEW_PANE" "exec $LAUNCH"
-herdr pane send-keys "$NEW_PANE" Enter
+herdr pane run "$NEW_PANE" "exec $LAUNCH"
