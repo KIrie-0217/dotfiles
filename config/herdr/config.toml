@@ -58,6 +58,13 @@ type = "pane"
 command = "hr-tab"
 description = "new workspace with layout picker"
 
+# stop server and exit
+[[keys.command]]
+key = "alt+shift+q"
+type = "shell"
+command = "herdr server stop"
+description = "stop all workspaces and exit"
+
 # lazygit in temporary pane
 [[keys.command]]
 key = "alt+shift+g"
