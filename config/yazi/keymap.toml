@@ -1,0 +1,4 @@
+[mgr]
+prepend_keymap = [
+    { on = "T", run = "plugin toggle-preview", desc = "Toggle preview pane" },
+]

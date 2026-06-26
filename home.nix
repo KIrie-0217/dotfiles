@@ -92,6 +92,7 @@
     jq
     delta
     bat
+    chafa
     gh
 
     # Languages
@@ -169,6 +170,10 @@
   # yazi opener (open file in nvim right pane)
   home.file.".local/bin/yazi-open.sh" = {
     source = ./config/scripts/yazi-open.sh;
+    executable = true;
+  };
+  home.file.".local/bin/yazi-nvim-wrapper.sh" = {
+    source = ./config/scripts/yazi-nvim-wrapper.sh;
     executable = true;
   };
 
