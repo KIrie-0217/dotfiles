@@ -4,18 +4,31 @@ SOCKET="/tmp/nvim-yazi.sock"
 
 # If nvim is already running, send file via --remote
 if [ -S "$SOCKET" ] && nvim --server "$SOCKET" --remote-expr "1" &>/dev/null; then
-  nvim --server "$SOCKET" --remote "$@"
+  nvim --server "$SOCKET" --remote-tab "$@"
   exit 0
 fi
 
-# Find the agent pane (left neighbor of yazi)
-AGENT_PANE=$(herdr pane neighbor --direction left --current 2>/dev/null \
-  | jq -r '.result.pane.pane_id // empty')
+# Find the agent (claude) pane directly by label
+AGENT_PANE=$(herdr pane list 2>/dev/null \
+  | jq -r '.result.panes[] | select(.agent == "claude") | .pane_id' | head -1)
 [ -z "$AGENT_PANE" ] && exec nvim "$@"
 
-# Pass file paths to wrapper via temp file (handles spaces in paths)
-printf '%s\n' "$@" > /tmp/herdr-yazi-nvim-args
+# Write a launch script with embedded file paths (avoids temp-file race)
+LAUNCH="/tmp/herdr-nvim-launch.sh"
+{
+  echo '#!/usr/bin/env bash'
+  printf 'exec nvim -p --listen %q' "$SOCKET"
+  for f in "$@"; do printf ' %q' "$f"; done
+  echo
+} > "$LAUNCH"
+chmod +x "$LAUNCH"
 
-# Split agent pane right: agent keeps 40% (~34% of total), nvim gets 60% (~51% of total)
-herdr pane split "$AGENT_PANE" --direction right --ratio 0.4 --close-on-exit \
-  --command "yazi-nvim-wrapper.sh" >/dev/null 2>&1
+# Split agent pane right (50/50)
+NEW_PANE=$(herdr pane split "$AGENT_PANE" --direction right --ratio 0.5 2>/dev/null \
+  | jq -r '.result.pane.pane_id // empty')
+[ -z "$NEW_PANE" ] && exec nvim "$@"
+
+# Wait for shell init, then exec the launch script (absolute path, no PATH dependency)
+sleep 0.3
+herdr pane send-text "$NEW_PANE" "exec $LAUNCH"
+herdr pane send-keys "$NEW_PANE" Enter
