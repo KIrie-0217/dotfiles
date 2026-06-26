@@ -51,6 +51,8 @@ switch_workspace = "alt+1..9"
 focus_agent = "prefix+alt+1..9"
 
 # session
+close_workspace = "alt+q"
+quit = "alt+shift+q"
 detach = "alt+d"
 
 # new workspace with layout picker
