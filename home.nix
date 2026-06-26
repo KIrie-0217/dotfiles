@@ -160,6 +160,12 @@
     executable = true;
   };
 
+  # herdr close current workspace and detach
+  home.file.".local/bin/hr-quit" = {
+    source = ./config/scripts/hr-quit;
+    executable = true;
+  };
+
   # yazi opener (open file in nvim right pane)
   home.file.".local/bin/yazi-open.sh" = {
     source = ./config/scripts/yazi-open.sh;
