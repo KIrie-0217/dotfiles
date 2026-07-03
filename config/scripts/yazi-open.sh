@@ -13,7 +13,7 @@ fi
 WS_FLAG=()
 [ -n "${HERDR_WORKSPACE_ID:-}" ] && WS_FLAG=(--workspace "$HERDR_WORKSPACE_ID")
 AGENT_PANE=$(herdr pane list "${WS_FLAG[@]}" 2>/dev/null \
-  | jq -r '.result.panes[] | select(.agent == "claude") | .pane_id' | head -1)
+  | jq -r '.result.panes[] | select(.agent != null and .agent != "") | .pane_id' | head -1)
 [ -z "$AGENT_PANE" ] && exec nvim "$@"
 
 # Write a launch script with embedded file paths (avoids temp-file race)

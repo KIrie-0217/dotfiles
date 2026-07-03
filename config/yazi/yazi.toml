@@ -7,6 +7,9 @@ show_hidden = true
 edit = [
     { run = 'yazi-open.sh "%*"', orphan = true, desc = "Edit in nvim pane", for = "unix" },
 ]
+download = [
+    { run = 'yazi-download.sh "%*"', block = true, desc = "Download to local (OSC 1337)", for = "unix" },
+]
 imgview = [
     { run = 'chafa -f kitty "%*"; read -r', block = true, desc = "View image (chafa)", for = "unix" },
 ]
@@ -17,11 +20,11 @@ open = [
 
 [open]
 prepend_rules = [
-    { name = "*/", use = ["edit"] },
-    { mime = "image/*", use = ["imgview", "open"] },
-    { name = "*.html", use = ["edit", "open"] },
-    { name = "*.htm", use = ["edit", "open"] },
-    { mime = "text/*", use = ["edit"] },
-    { name = "*.md", use = ["edit"] },
-    { name = "*.markdown", use = ["edit"] },
+    { mime = "image/*", use = ["imgview", "download", "open"] },
+    { name = "*.html", use = ["edit", "download", "open"] },
+    { name = "*.htm", use = ["edit", "download", "open"] },
+    { mime = "text/*", use = ["edit", "download"] },
+    { name = "*.md", use = ["edit", "download"] },
+    { name = "*.markdown", use = ["edit", "download"] },
+    { name = "*", use = ["edit", "download", "open"] },
 ]
