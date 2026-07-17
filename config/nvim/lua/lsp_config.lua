@@ -16,6 +16,12 @@ vim.api.nvim_create_autocmd("LspAttach", {
         })
       end,
     })
+
+    -- gd/gD are not part of Neovim's built-in LSP defaults (only grr/gri/grt/grn/gra are)
+    vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = ev.buf, desc = "vim.lsp.buf.definition()" })
+    vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { buffer = ev.buf, desc = "vim.lsp.buf.declaration()" })
+    -- K is remapped to '^' in keymap_vanila.lua, so hover moves to <leader>k
+    vim.keymap.set("n", "<leader>k", vim.lsp.buf.hover, { buffer = ev.buf, desc = "vim.lsp.buf.hover()" })
   end,
 })
 
@@ -41,6 +47,7 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 vim.lsp.config('pyright', { capabilities = capabilities })
 vim.lsp.config('jsonls', { capabilities = capabilities })
 vim.lsp.config('yamlls', { capabilities = capabilities })
+vim.lsp.config('ts_ls', { capabilities = capabilities })
 
 vim.lsp.config('lua_ls', {
   capabilities = capabilities,
@@ -66,7 +73,7 @@ vim.lsp.config('gopls', {
   },
 })
 
-vim.lsp.enable({ 'pyright', 'jsonls', 'yamlls', 'lua_ls', 'gopls' })
+vim.lsp.enable({ 'pyright', 'jsonls', 'yamlls', 'lua_ls', 'gopls', 'ts_ls' })
 
 -- rustaceanvim (handles rust-analyzer internally)
 local bufnr = vim.api.nvim_get_current_buf()

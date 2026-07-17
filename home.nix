@@ -110,6 +110,7 @@
     yaml-language-server
     gopls
     rust-analyzer
+    typescript-language-server
   ];
 
   # wezterm: config only on macOS (binary installed via brew)
