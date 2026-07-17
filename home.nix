@@ -177,6 +177,10 @@
     source = ./config/scripts/yazi-nvim-wrapper.sh;
     executable = true;
   };
+  home.file.".local/bin/yazi-download.sh" = {
+    source = ./config/scripts/yazi-download.sh;
+    executable = true;
+  };
 
   # Autocomplete specs
   home.file.".fig/autocomplete/build/zj.js".source = ./config/fig/zj.js;
