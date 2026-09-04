@@ -2,7 +2,8 @@
 
 var aiSubcommands = [
   { name: "claude", description: "Start with claude (default)" },
-  { name: "kiro", description: "Start with kiro-cli chat" },
+  { name: "kiro", description: "Start with kiro-cli --v3" },
+  { name: "codex", description: "Start with codex" },
 ];
 
 var completionSpec = {
