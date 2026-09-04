@@ -3,7 +3,8 @@
 #
 # Usage:
 #   hr              Start herdr with claude (default)
-#   hr kiro         Start herdr with kiro-cli chat
+#   hr kiro         Start herdr with kiro-cli --v3
+#   hr codex        Start herdr with codex
 #   hr claude       Start herdr with claude
 #   hr <args...>    Pass arguments directly to herdr
 
@@ -12,7 +13,8 @@ set -euo pipefail
 ai="claude"
 
 case "${1:-}" in
-  kiro)   ai="kiro-cli"; shift ;;
+  kiro)   ai="kiro"; shift ;;
+  codex)  ai="codex"; shift ;;
   claude) ai="claude"; shift ;;
 esac
 
@@ -24,11 +26,11 @@ dir="$PWD"
 tab_name=$(basename "$dir")
 
 # Build agent command
-if [ "$ai" = "kiro-cli" ]; then
-  agent_cmd="kiro-cli chat"
-else
-  agent_cmd="$ai"
-fi
+case "$ai" in
+  kiro)  agent_cmd="kiro-cli --v3" ;;
+  codex) agent_cmd="codex" ;;
+  *)     agent_cmd="claude" ;;
+esac
 
 setup_layout() {
   # Create workspace
@@ -58,8 +60,9 @@ setup_layout() {
   # Run agent in left-top pane
   herdr pane run "$pane_id" "$agent_cmd" >/dev/null 2>&1 || true
 
-  # Run yazi in right pane
-  herdr pane run "$yazi_pane" "yazi" >/dev/null 2>&1 || true
+  # Run yazi in right pane. The explicit pane ID lets its nvim opener work
+  # even when herdr does not classify the selected command as an agent.
+  herdr pane run "$yazi_pane" "HERDR_AGENT_PANE_ID=$pane_id yazi" >/dev/null 2>&1 || true
 
   # Git repo: split bottom for shell + lazygit
   if [ -d "$dir/.git" ] || git -C "$dir" rev-parse --git-dir &>/dev/null; then

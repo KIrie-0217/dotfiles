@@ -18,15 +18,15 @@ dir=$(fd --type d --no-ignore --hidden --exclude .git --follow --max-depth 3 . "
          --bind "change:reload:$fd_from_query") || exit 0
 
 # Step 2: select AI agent
-ai=$(printf 'claude\nkiro\n' \
+ai=$(printf 'claude\nkiro\ncodex\n' \
   | fzf --prompt="agent> " --height=40% --reverse) || exit 0
 
 # Build agent command
-if [ "$ai" = "kiro" ]; then
-  agent_cmd="kiro-cli chat"
-else
-  agent_cmd="claude"
-fi
+case "$ai" in
+  kiro)  agent_cmd="kiro-cli --v3" ;;
+  codex) agent_cmd="codex" ;;
+  *)     agent_cmd="claude" ;;
+esac
 
 # Step 3: create workspace and layout
 tab_name=$(basename "$dir")
@@ -48,7 +48,7 @@ bottom_pane=$(echo "$split2_json" | jq -r '.result.pane.pane_id // empty')
 
 # Run commands
 herdr pane run "$pane_id" "$agent_cmd" >/dev/null 2>&1 || true
-herdr pane run "$yazi_pane" "TERM_PROGRAM= WEZTERM_PANE= yazi" >/dev/null 2>&1 || true
+herdr pane run "$yazi_pane" "TERM_PROGRAM= WEZTERM_PANE= HERDR_AGENT_PANE_ID=$pane_id yazi" >/dev/null 2>&1 || true
 
 # Git repo: split bottom for shell + lazygit
 if [ -d "$dir/.git" ]; then
